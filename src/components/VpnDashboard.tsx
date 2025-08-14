@@ -207,26 +207,26 @@ PersistentKeepalive = 25`;
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
-              <Shield className="h-8 w-8 text-primary" />
+    <div className="min-h-screen bg-background p-3 md:p-6">
+      <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
+        {/* Mobile-optimized header */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex-1">
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-2">
+              <Shield className="h-6 w-6 md:h-8 md:w-8 text-primary" />
               VPN Fortress
             </h1>
-            <p className="text-muted-foreground">Self-hosted secure VPN management</p>
+            <p className="text-sm md:text-base text-muted-foreground">Self-hosted secure VPN management</p>
             {isConnected && connectionIP && (
-              <p className="text-sm text-accent font-medium mt-1">
+              <p className="text-xs md:text-sm text-accent font-medium mt-1">
                 ✓ Connected via {connectionIP}
               </p>
             )}
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3 w-full sm:w-auto">
             <Button 
               onClick={handleConnect}
-              className={isConnected ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground" : ""}
+              className={`flex-1 sm:flex-none ${isConnected ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground" : ""}`}
               size="lg"
             >
               {isConnected ? (
@@ -241,11 +241,26 @@ PersistentKeepalive = 25`;
                 </>
               )}
             </Button>
-            <Badge className={getStatusColor(serverStats.status)}>
+            <Badge className={`${getStatusColor(serverStats.status)} hidden sm:inline-flex`}>
               {serverStats.status === 'running' ? <CheckCircle className="h-3 w-3 mr-1" /> : <AlertCircle className="h-3 w-3 mr-1" />}
               {serverStats.status.toUpperCase()}
             </Badge>
           </div>
+        </div>
+
+        {/* Mobile status card */}
+        <div className="sm:hidden">
+          <Card>
+            <CardContent className="p-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Server Status</span>
+                <Badge className={getStatusColor(serverStats.status)}>
+                  {serverStats.status === 'running' ? <CheckCircle className="h-3 w-3 mr-1" /> : <AlertCircle className="h-3 w-3 mr-1" />}
+                  {serverStats.status.toUpperCase()}
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Stats Overview */}
