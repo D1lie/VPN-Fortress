@@ -56,6 +56,8 @@ interface ServerStats {
 
 const VpnDashboard = () => {
   const { toast } = useToast();
+  const [isConnected, setIsConnected] = useState(false);
+  const [connectionIP, setConnectionIP] = useState('');
   const [serverStats, setServerStats] = useState<ServerStats>({
     status: 'running',
     uptime: '5d 12h 30m',
@@ -171,6 +173,25 @@ const VpnDashboard = () => {
     }
   };
 
+  const handleConnect = () => {
+    setIsConnected(!isConnected);
+    if (!isConnected) {
+      // Simulate getting a new IP from VPN server
+      const vpnIPs = ['185.234.72.54', '194.135.83.19', '146.70.95.32', '198.211.45.67'];
+      setConnectionIP(vpnIPs[Math.floor(Math.random() * vpnIPs.length)]);
+      toast({
+        title: "Connected to VPN", 
+        description: "Your connection is now secure and anonymous"
+      });
+    } else {
+      setConnectionIP('');
+      toast({
+        title: "Disconnected from VPN",
+        description: "You are now using your regular internet connection"
+      });
+    }
+  };
+
   const generateClientConfig = (user: VpnUser) => {
     return `[Interface]
 PrivateKey = <CLIENT_PRIVATE_KEY>
@@ -196,8 +217,30 @@ PersistentKeepalive = 25`;
               VPN Fortress
             </h1>
             <p className="text-muted-foreground">Self-hosted secure VPN management</p>
+            {isConnected && connectionIP && (
+              <p className="text-sm text-accent font-medium mt-1">
+                ✓ Connected via {connectionIP}
+              </p>
+            )}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <Button 
+              onClick={handleConnect}
+              className={isConnected ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground" : ""}
+              size="lg"
+            >
+              {isConnected ? (
+                <>
+                  <Wifi className="h-4 w-4 mr-2" />
+                  Disconnect
+                </>
+              ) : (
+                <>
+                  <Shield className="h-4 w-4 mr-2" />
+                  Connect
+                </>
+              )}
+            </Button>
             <Badge className={getStatusColor(serverStats.status)}>
               {serverStats.status === 'running' ? <CheckCircle className="h-3 w-3 mr-1" /> : <AlertCircle className="h-3 w-3 mr-1" />}
               {serverStats.status.toUpperCase()}
